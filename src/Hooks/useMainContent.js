@@ -1,21 +1,68 @@
 import moment from "moment";
 import { useEffect, useState } from "react";
 import axios from "axios";
-const useMainContext = () => {
+
+const useMainContent = () => {
   const [timings, setTimings] = useState({});
   const [currentTime, setCurrentTime] = useState(null);
   const [selectedCity, setSelectedCity] = useState("cairo");
   const [nextPrayer, setNextPrayer] = useState("");
-
   const [remainingTimeUntilNextPrayer, setRemainingTimeUntilNextPrayer] =
     useState();
-    
+
+
+  const [locationError, setLocationError] = useState("");
+
   const handleCityChange = (event) => {
-    console.log(event.target.value);
     setSelectedCity(event.target.value);
   };
-  console.log("re render");
 
+  //             get  location of user (client)
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+
+          try {
+            // Call Reverse Geocoding API
+            const res = await fetch(
+              `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
+            );
+            const data = await res.json();
+
+            const cityName =
+              data.address.city || data.address.town || data.address.village;
+
+            if (cityName) {
+              setSelectedCity(cityName);
+            }
+          } catch (err) {
+            console.error("Error fetching city name:", err);
+            setSelectedCity("cairo");
+            setLocationError(
+              "Your location could not be determined. Cairo was automatically selected."
+            );
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error);
+          setSelectedCity("cairo");
+          setLocationError(
+            "Location permission denied. Cairo was automatically selected."
+          );
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+      setSelectedCity("cairo");
+      setLocationError(
+        "The browser does not support location selection. Cairo has been automatically selected."
+      );
+    }
+  }, []);
+
+  // get times of city (selectedCity) for every prayer
   useEffect(() => {
     const fetchPrayerTimings = async () => {
       try {
@@ -24,7 +71,6 @@ const useMainContext = () => {
         );
         setTimings(response.data.data.timings);
       } catch (error) {
-        // setError("Error fetching prayer timings.");
         console.error("Error fetching prayer timings:", error);
       }
     };
@@ -32,26 +78,17 @@ const useMainContext = () => {
     fetchPrayerTimings();
   }, [selectedCity]);
 
+  // get CurrentTime every minute
   useEffect(() => {
     const updateCurrentTime = () => {
-      setCurrentTime(moment().format("h:mm:ss a |  MMMM Do YYYY "));
+      setCurrentTime(moment().format("h:mm a |  MMMM Do YYYY "));
     };
     updateCurrentTime();
-    const intervalTime = setInterval(updateCurrentTime, 1000);
-
+    const intervalTime = setInterval(updateCurrentTime, 60 * 1000);
     return () => {
       clearInterval(intervalTime);
     };
   }, []);
-
-  useEffect(() => {
-    let interval = setInterval(() => {
-      setupCountdownTimer();
-    }, 1000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [timings]);
 
   const setupCountdownTimer = () => {
     let currentMoment = moment();
@@ -63,7 +100,7 @@ const useMainContext = () => {
     const Isha = moment(timings.Isha, "HH:mm");
 
     if (currentMoment.isAfter(Fajr) && currentMoment.isBefore(Duhr)) {
-      setNextPrayer(" Dhuhr");
+      setNextPrayer(" Duhr");
       const remainingTime = Duhr.diff(currentMoment);
       setRemainingTimeUntilNextPrayer(remainingTime);
     } else if (currentMoment.isAfter(Duhr) && currentMoment.isBefore(Asr)) {
@@ -77,7 +114,6 @@ const useMainContext = () => {
     } else if (currentMoment.isAfter(Sunset) && currentMoment.isBefore(Isha)) {
       setNextPrayer(" Isha");
       const remainingTime = Isha.diff(currentMoment);
-
       setRemainingTimeUntilNextPrayer(remainingTime);
     } else {
       const nextFajrMoment = moment(timings.Fajr, "HH:mm").add(1, "days");
@@ -87,14 +123,26 @@ const useMainContext = () => {
     }
   };
 
+  useEffect(() => {
+    setupCountdownTimer();
+    let interval = setInterval(() => {
+      setupCountdownTimer();
+    }, 1000 * 60);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [timings]);
+
   return {
     currentTime,
     nextPrayer,
     handleCityChange,
     remainingTimeUntilNextPrayer,
     selectedCity,
-    timings
+    timings,
+    locationError, 
+    setLocationError,
   };
 };
 
-export default useMainContext;
+export default useMainContent;

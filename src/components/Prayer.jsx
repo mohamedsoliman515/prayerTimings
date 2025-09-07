@@ -6,7 +6,7 @@ import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
 import { memo } from "react";
 const Prayer = ({ name, image, time }) => {
-  console.log("Prayer re rendere");
+
   
   return (
     <>
