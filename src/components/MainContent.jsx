@@ -13,8 +13,9 @@ import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
 import moment from "moment";
 import useMainContent from "../Hooks/useMainContent";
-import { Grid, Snackbar, Alert } from "@mui/material";
+import { Grid } from "@mui/material";
 import PrayerSkeleton from "./PrayerSkeleton ";
+import SnackBar from "./SnackBar";
 
 const Prayer = lazy(() => import("./Prayer"));
 const MainContent = () => {
@@ -25,46 +26,35 @@ const MainContent = () => {
     remainingTimeUntilNextPrayer,
     selectedCity,
     timings,
-    locationError,
-    setLocationError,
   } = useMainContent();
 
   return (
     <>
-      <Snackbar
-        open={!!locationError}
-        autoHideDuration={5000}
-        onClose={() => setLocationError("")}
-      >
-        <Alert
-          onClose={() => setLocationError("")}
-          severity="warning"
-          sx={{ width: "100%" }}
-        >
-          {locationError}
-        </Alert>
-      </Snackbar>
-      {/*  */}
-      <Grid container>
-        <Grid item xs={6}>
-          <div>
-            <h2>{currentTime}</h2>
-            <h1>{selectedCity}</h1>
-          </div>
-        </Grid>
-        <Grid item xs={6}>
-          <div style={{ textAlign: "center" }}>
-            <h2>
-              The time remaining until prayer
-              {nextPrayer}
-            </h2>
-            <h1>
-              {`${moment.duration(remainingTimeUntilNextPrayer).hours()} :
+      {/*start  Snackbar  */}
+      <SnackBar />
+      {/* end  Snackbar  */}
+ 
+        <Grid container>
+          <Grid item xs={6}>
+            <div>
+              <h2>{currentTime}</h2>
+              <h1>{selectedCity}</h1>
+            </div>
+          </Grid>
+          <Grid item xs={6}>
+            <div style={{ textAlign: "center" }}>
+              <h2>
+                The time remaining until prayer
+                {nextPrayer}
+              </h2>
+              <h1>
+                {`${moment.duration(remainingTimeUntilNextPrayer).hours()} :
               ${moment.duration(remainingTimeUntilNextPrayer).minutes()}`}
-            </h1>
-          </div>
+              </h1>
+            </div>
+          </Grid>
         </Grid>
-      </Grid>
+
       {/*  */}
 
       <Divider style={{ borderColor: "#fff", width: "100%" }} />
