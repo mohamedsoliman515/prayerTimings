@@ -8,8 +8,8 @@ const SnackBar = () => {
   } = useMainContent();
   return (
     <Snackbar
-      open={!!locationError}
-      autoHideDuration={5000}
+      open={!!locationError} 
+      autoHideDuration={10000}
       onClose={() => setLocationError("")}
     >
       <Alert

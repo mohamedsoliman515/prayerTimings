@@ -1,28 +1,25 @@
 // import  from "@mui/material/Unstable_Grid2";
 import { lazy, Suspense } from "react";
 import Divider from "@mui/material/Divider";
-import { Box, Stack } from "@mui/material";
+import {  Stack } from "@mui/material";
 import fajr from "../assets/fajr-prayer.png";
 import Duhr from "../assets/dhhr-prayer-mosque.png";
 import Asr from "../assets/asr-prayer-mosque.png";
 import Sunset from "../assets/sunset-prayer-mosque.png";
 import Night from "../assets/night-prayer-mosque.png";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+
 import moment from "moment";
 import useMainContent from "../Hooks/useMainContent";
 import { Grid } from "@mui/material";
 import PrayerSkeleton from "./PrayerSkeleton ";
 import SnackBar from "./SnackBar";
+import InputSelectCity from "./InputSelectCity";
 
 const Prayer = lazy(() => import("./Prayer"));
 const MainContent = () => {
   const {
     currentTime,
     nextPrayer,
-    handleCityChange,
     remainingTimeUntilNextPrayer,
     selectedCity,
     timings,
@@ -33,7 +30,7 @@ const MainContent = () => {
       {/*start  Snackbar  */}
       <SnackBar />
       {/* end  Snackbar  */}
- 
+      <header>
         <Grid container>
           <Grid item xs={6}>
             <div>
@@ -54,7 +51,7 @@ const MainContent = () => {
             </div>
           </Grid>
         </Grid>
-
+      </header>
       {/*  */}
 
       <Divider style={{ borderColor: "#fff", width: "100%" }} />
@@ -89,25 +86,7 @@ const MainContent = () => {
       {/* prayers cards */}
 
       {/* select city */}
-      <Box sx={{ minWidth: 120, marginBottom: "50px", textAlign: "center" }}>
-        <FormControl sx={{ width: "30%", color: "#fff" }}>
-          <InputLabel sx={{ color: "#fff" }} id="demo-simple-select-label">
-            {selectedCity}
-          </InputLabel>
-          <Select
-            value={selectedCity}
-            labelId="demo-simple-select-label"
-            id="demo-simple-select"
-            label="City"
-            onChange={handleCityChange}
-            style={{ color: "#fff" }}
-          >
-            <MenuItem value="Cairo">Cairo</MenuItem>
-            <MenuItem value="Alex">Alex</MenuItem>
-            <MenuItem value="Giza">Giza</MenuItem>
-          </Select>
-        </FormControl>
-      </Box>
+    <InputSelectCity/>
     </>
   );
 };
