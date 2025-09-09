@@ -5,11 +5,10 @@ import axios from "axios";
 const useMainContent = () => {
   const [timings, setTimings] = useState({});
   const [currentTime, setCurrentTime] = useState(null);
-  const [selectedCity, setSelectedCity] = useState("cairo");
+  const [selectedCity, setSelectedCity] = useState("Cairo");
   const [nextPrayer, setNextPrayer] = useState("");
   const [remainingTimeUntilNextPrayer, setRemainingTimeUntilNextPrayer] =
     useState();
-
 
   const [locationError, setLocationError] = useState("");
 
@@ -19,20 +18,20 @@ const useMainContent = () => {
 
   //             get  location of user (client)
   useEffect(() => {
+    // from (client)
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         async (position) => {
           const { latitude, longitude } = position.coords;
 
           try {
-            // Call Reverse Geocoding API
+            // send long & lat to free API
             const res = await fetch(
               `https://nominatim.openstreetmap.org/reverse?lat=${latitude}&lon=${longitude}&format=json`
             );
             const data = await res.json();
 
-            const cityName =
-              data.address.city || data.address.town || data.address.village;
+            const cityName = data.address.city;
 
             if (cityName) {
               setSelectedCity(cityName);
@@ -140,7 +139,7 @@ const useMainContent = () => {
     remainingTimeUntilNextPrayer,
     selectedCity,
     timings,
-    locationError, 
+    locationError,
     setLocationError,
   };
 };
