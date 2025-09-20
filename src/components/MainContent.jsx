@@ -1,7 +1,7 @@
 // import  from "@mui/material/Unstable_Grid2";
 import { lazy, Suspense } from "react";
 import Divider from "@mui/material/Divider";
-import {  Stack } from "@mui/material";
+import { Stack } from "@mui/material";
 import fajr from "../assets/fajr-prayer.png";
 import Duhr from "../assets/dhhr-prayer-mosque.png";
 import Asr from "../assets/asr-prayer-mosque.png";
@@ -31,14 +31,19 @@ const MainContent = () => {
       <SnackBar />
       {/* end  Snackbar  */}
       <header>
-        <Grid container>
-          <Grid item xs={6}>
+        <Grid
+          container
+          spacing={2}
+          justifyContent={{ xs: "center", md: "flex-start" }}
+          alignItems="center"
+        >
+          <Grid item sm={12} md={6}>
             <div>
               <h2>{currentTime}</h2>
               <h1>{selectedCity}</h1>
             </div>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item sm={12} md={6}>
             <div style={{ textAlign: "center" }}>
               <h2>
                 The time remaining until prayer
@@ -86,7 +91,7 @@ const MainContent = () => {
       {/* prayers cards */}
 
       {/* select city */}
-    <InputSelectCity/>
+      <InputSelectCity />
     </>
   );
 };
